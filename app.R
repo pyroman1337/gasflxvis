@@ -127,16 +127,7 @@ ui <- fluidPage(
          # ),
          
          tabPanel(p(icon("question-circle"), "Help"),
-            br(),
-            h4(strong("File upload for flux visualisation")),
-            # br(),
-            h5("The input table should contain the following columns:"),
-            h5(strong("chamber.nr:"), "This is a factor that contains a lable for each individual chamber"),
-            h5("linear.f0: linear least square regression estimate of the flux"),
-            h5("robust.linear.f0: robust linear flux estimate (by gasfluxes"),
-            h5("HMR.f0: HMR estmate	dynamic.kappa.f0	date	treatment_fact1	treatment_fact2	treatment_fact3	block	sub_factor
-            ")
-         
+            includeMarkdown("help.Rmd")
          )  ## maybe not "hahahah"
          
          # fluidRow(column(3, verbatimTextOutput("value")))
@@ -208,6 +199,7 @@ server <- function(input, output) {
         
         ghg.file[, block := as.factor(block)] # blocks as factors
         ghg.file[, chamber.nr := as.factor(chamber.nr)] # chamber number as factor
+        ghg.file[, sub_factor := as.factor(sub_factor)] # chamber number as factor
         
         # ghg.file[ ,treatment1L := substr(treatment,1,1)]
         # ghg.file[ ,block := substr(treatment,2,2)]
@@ -222,7 +214,7 @@ server <- function(input, output) {
                              "Treatment factor 3" = "treatment_fact3",
                              "Chamber number"     = "chamber.nr" ,
                              "Block"              = "block",
-                             "Sub factor"         = "sub_factor")
+                             "Further factor"     = "sub_factor")
                       
         # 
         ghg.file.melted <- ghg.file.melt[site %in% input$site]

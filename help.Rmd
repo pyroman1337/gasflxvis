@@ -28,3 +28,5 @@ Note: Separator of .csv file is a semicolon ";" (can possibly be changed to comm
 
 ## Gasflux calculation 
 
+The input file for the flux calculation looks at the moment like this:
+https://github.com/pyroman1337/gasflxvis/blob/master/data/GC-samples_subset.csv
