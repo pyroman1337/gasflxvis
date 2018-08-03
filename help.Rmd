@@ -5,10 +5,6 @@ date: "3 August 2018"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 ## File upload for flux visualisation
 
 The input table should contain the following columns:
@@ -26,4 +22,9 @@ The input table should contain the following columns:
 * `HMR.f0`: HMR estmate	dynamic.kappa.f0	https://cran.r-project.org/web/packages/HMR/index.html
 * `dynamic.kappa.f0`: see https://doi.org/10.1371/journal.pone.0200876
 
-See the template for flux visualisation: 
+See the template for flux visualisation: https://github.com/pyroman1337/gasflxvis/blob/master/data/gasflux-N2O_example-input.csv
+
+Note: Separator of .csv file is a semicolon ";" (can possibly be changed to comma in the future)
+
+## Gasflux calculation 
+
