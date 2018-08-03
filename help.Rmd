@@ -1,0 +1,29 @@
+---
+title: "help"
+author: "Roman Hüppi"
+date: "3 August 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## File upload for flux visualisation
+
+The input table should contain the following columns:
+#### Experimental design variables
+* `treatment_fact1`: First experimental factor of the dataset, i.e. diversification treatment (mixed crop vs. mono crop)
+* `treatment_fact2`: Second experimental factor of the dataset, i.e. fertilisation treatment (organic vs. mineral)
+* `treatment_fact3`: Third experimental factor, if available, i.e. position of chambers within the plots (row vs. berm)	
+* `block`: Using a block design, this can be specified here
+* `sub_factor`: Any other sub factor of the experiment...
+* `chamber.nr`: This is a factor that contains a label for each individual chamber to look at the fluxes from each chamber separatly, no matter of the treatments.
+
+#### Flux data
+* `linear.f0`: Linear least square regression estimate of the flux
+* `robust.linear.f0`: A robust linear flux estimate (i.e. from `gasfluxes` of the package: https://cran.r-project.org/web/packages/gasfluxes/index.html) 
+* `HMR.f0`: HMR estmate	dynamic.kappa.f0	https://cran.r-project.org/web/packages/HMR/index.html
+* `dynamic.kappa.f0`: see https://doi.org/10.1371/journal.pone.0200876
+
+See the template for flux visualisation: 
