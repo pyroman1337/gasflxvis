@@ -57,7 +57,7 @@ wrap_gasfluxes <- function(gc.samples, treatment1 = "comment", gas.species){
   
   # gasflux.select <- selectfluxes(gasflux.output, select = "kappa.max", f.detect = 0.0027, t.meas = 0.5)
   gasflux.select <- selectfluxes(gasflux.output, select = "kappa.max", f.detect = gasflux.output$f.detect.n2o, t.meas = gasflux.output$t.meas)
-  setnames(gasflux.select,"flux","dynamic.kappa") # rename output flux column to kappa max dynamic selection
+  setnames(gasflux.select,"flux","dynamic.kappa.f0") # rename output flux column to kappa max dynamic selection
   ## additional flux selection algorithms could be inserted here
   # gasflux.output <- merge(gasflux.output,gc.samples, by.x="ID", by.y="sample.nr",all.x=T)
   # add covariables to output #
@@ -71,7 +71,7 @@ wrap_gasfluxes <- function(gc.samples, treatment1 = "comment", gas.species){
   gasflux.meta$chamber.nr  <- as.numeric(flux.ID.frame$chamber.nr)  # 
   
   
-  input.chamber <- fread("data/DiverFarming_chamber.input.csv",sep = ";",header = T)
+  input.chamber <- fread("data/DiverFarming_chamber.input.csv",sep = ",",header = T)
   
   gasflux.meta <- merge(gasflux.meta,input.chamber,by=c("chamber.nr","site"))
   

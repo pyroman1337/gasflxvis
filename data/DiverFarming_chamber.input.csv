@@ -1,61 +1,61 @@
-chamber.nr;site;treatment;height [cm];diameter [cm];comments;distance from border [m];position
-1;CS10;a1;5;25;no cover;50;interrow
-2;CS10;a1;5;25;no cover;100;interrow
-3;CS10;b1;5;25;field pea;100;interrow
-4;CS10;b1;5;25;field pea;50;interrow
-5;CS10;c1;5;25;oat;50;interrow
-6;CS10;c1;5;25;oat;100;interrow
-7;CS10;a2;5;25;no cover;100;interrow
-8;CS10;a2;5;25;no cover;50;interrow
-9;CS10;b2;5;25;field pea;50;interrow
-10;CS10;b2;5;25;field pea;100;interrow
-11;CS10;c2;5;25;oat;100;interrow
-12;CS10;c2;5;25;oat;50;interrow
-13;CS10;a3;5;25;no cover;50;interrow
-14;CS10;a3;5;25;no cover;100;interrow
-15;CS10;b3;5;25;field pea;100;interrow
-16;CS10;b3;5;25;field pea;50;interrow
-17;CS10;c3;5;25;oat;50;interrow
-18;CS10;c3;5;25;oat;100;interrow
-1;CS11;a1;5;25;grass;20;interrow
-2;CS11;a1;5;25;grass;20;berm
-3;CS11;b1;5;25;aromatic;20;interrow
-4;CS11;b1;5;25;aromatic;20;berm
-5;CS11;c1;5;25;no cover;20;interrow
-6;CS11;c1;5;25;no cover;20;berm
-7;CS11;a2;5;25;grass;20;interrow
-8;CS11;a2;5;25;grass;20;berm
-9;CS11;b2;5;25;aromatic;20;interrow
-10;CS11;b2;5;25;aromatic;20;berm
-11;CS11;c2;5;25;no cover;20;interrow
-12;CS11;c2;5;25;no cover;20;berm
-13;CS11;a3;5;25;grass;20;interrow
-14;CS11;a3;5;25;grass;20;berm
-15;CS11;b3;5;25;aromatic;20;interrow
-16;CS11;b3;5;25;aromatic;20;berm
-17;CS11;c3;5;25;no cover;20;interrow
-18;CS11;c3;5;25;no cover;20;berm
-1;CS9;oreg-1-R;16;30;oregano;down;berm
-2;CS9;tym-1-S;13;30;thyme;down;interrow
-3;CS9;gmt-1-R;17;30;greek mountain tea;down;berm
-4;CS9;ctrl-1-S;10.5;30;control;down;interrow
-5;CS9;tym-2-R;17.25;30;thyme;down;berm
-6;CS9;ctrl-2-R;15.75;30;control;down;berm
-7;CS9;gmt-2-S;10;30;greek mountain tea;down;interrow
-8;CS9;oreg-2-S;12.75;30;oregano;down;interrow
-9;CS9;ctrl-3-S;11.25;30;control;down;interrow
-10;CS9;oreg-3-R;17.5;30;oregano;down;berm
-11;CS9;gmt-3-R;15.75;30;greek mountain tea;down;berm
-12;CS9;tym-3-S;7.25;30;thyme;down;interrow
-13;CS9;oreg-1-S;12;30;oregano;up;interrow
-14;CS9;tym-1-R;15.5;30;thyme;up;berm
-15;CS9;gmt-1-S;13.75;30;greek mountain tea;up;interrow
-16;CS9;ctrl-1-R;19;30;control;up;berm
-17;CS9;tym-2-S;14;30;thyme;up;interrow
-18;CS9;ctrl-2-S;11.75;30;control;up;interrow
-19;CS9;gmt-2-R;18.5;30;greek mountain tea;up;berm
-20;CS9;oreg-2-R;15.5;30;oregano;up;berm
-21;CS9;ctrl-3-R;16;30;control;up;berm
-22;CS9;oreg-3-S;11.75;30;oregano;up;interrow
-23;CS9;gmt-3-S;11.75;30;greek mountain tea;up;interrow
-24;CS9;tym-3-R;16.25;30;thyme;up;berm
+chamber.nr,site,treatment_fact2,height [cm],diameter [cm],treatment_fact1,sub_factor,treatment_fact3,block
+1,CS10,a1,5,25,no cover,50,interrow,1
+2,CS10,a1,5,25,no cover,100,interrow,1
+3,CS10,b1,5,25,field pea,100,interrow,1
+4,CS10,b1,5,25,field pea,50,interrow,1
+5,CS10,c1,5,25,oat,50,interrow,1
+6,CS10,c1,5,25,oat,100,interrow,1
+7,CS10,a2,5,25,no cover,100,interrow,2
+8,CS10,a2,5,25,no cover,50,interrow,2
+9,CS10,b2,5,25,field pea,50,interrow,2
+10,CS10,b2,5,25,field pea,100,interrow,2
+11,CS10,c2,5,25,oat,100,interrow,2
+12,CS10,c2,5,25,oat,50,interrow,2
+13,CS10,a3,5,25,no cover,50,interrow,3
+14,CS10,a3,5,25,no cover,100,interrow,3
+15,CS10,b3,5,25,field pea,100,interrow,3
+16,CS10,b3,5,25,field pea,50,interrow,3
+17,CS10,c3,5,25,oat,50,interrow,3
+18,CS10,c3,5,25,oat,100,interrow,3
+1,CS11,a1,5,25,grass,20,interrow,1
+2,CS11,a1,5,25,grass,20,berm,1
+3,CS11,b1,5,25,aromatic,20,interrow,1
+4,CS11,b1,5,25,aromatic,20,berm,1
+5,CS11,c1,5,25,no cover,20,interrow,1
+6,CS11,c1,5,25,no cover,20,berm,1
+7,CS11,a2,5,25,grass,20,interrow,2
+8,CS11,a2,5,25,grass,20,berm,2
+9,CS11,b2,5,25,aromatic,20,interrow,2
+10,CS11,b2,5,25,aromatic,20,berm,2
+11,CS11,c2,5,25,no cover,20,interrow,2
+12,CS11,c2,5,25,no cover,20,berm,2
+13,CS11,a3,5,25,grass,20,interrow,3
+14,CS11,a3,5,25,grass,20,berm,3
+15,CS11,b3,5,25,aromatic,20,interrow,3
+16,CS11,b3,5,25,aromatic,20,berm,3
+17,CS11,c3,5,25,no cover,20,interrow,3
+18,CS11,c3,5,25,no cover,20,berm,3
+1,CS9,oreg-1-R,16,30,oregano,down,berm,1
+2,CS9,tym-1-S,13,30,thyme,down,interrow,1
+3,CS9,gmt-1-R,17,30,greek mountain tea,down,berm,1
+4,CS9,ctrl-1-S,10.5,30,control,down,interrow,1
+5,CS9,tym-2-R,17.25,30,thyme,down,berm,2
+6,CS9,ctrl-2-R,15.75,30,control,down,berm,2
+7,CS9,gmt-2-S,10,30,greek mountain tea,down,interrow,2
+8,CS9,oreg-2-S,12.75,30,oregano,down,interrow,2
+9,CS9,ctrl-3-S,11.25,30,control,down,interrow,3
+10,CS9,oreg-3-R,17.5,30,oregano,down,berm,3
+11,CS9,gmt-3-R,15.75,30,greek mountain tea,down,berm,3
+12,CS9,tym-3-S,7.25,30,thyme,down,interrow,3
+13,CS9,oreg-1-S,12,30,oregano,up,interrow,1
+14,CS9,tym-1-R,15.5,30,thyme,up,berm,1
+15,CS9,gmt-1-S,13.75,30,greek mountain tea,up,interrow,1
+16,CS9,ctrl-1-R,19,30,control,up,berm,1
+17,CS9,tym-2-S,14,30,thyme,up,interrow,2
+18,CS9,ctrl-2-S,11.75,30,control,up,interrow,2
+19,CS9,gmt-2-R,18.5,30,greek mountain tea,up,berm,2
+20,CS9,oreg-2-R,15.5,30,oregano,up,berm,2
+21,CS9,ctrl-3-R,16,30,control,up,berm,3
+22,CS9,oreg-3-S,11.75,30,oregano,up,interrow,3
+23,CS9,gmt-3-S,11.75,30,greek mountain tea,up,interrow,3
+24,CS9,tym-3-R,16.25,30,thyme,up,berm,3
