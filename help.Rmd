@@ -20,13 +20,17 @@ The input table should contain the following columns:
 * `linear.f0`: Linear least square regression estimate of the flux
 * `robust.linear.f0`: A robust linear flux estimate (i.e. from `gasfluxes` of the package: https://cran.r-project.org/web/packages/gasfluxes/index.html) 
 * `HMR.f0`: HMR estmate	dynamic.kappa.f0	https://cran.r-project.org/web/packages/HMR/index.html
-* `dynamic.kappa.f0`: see https://doi.org/10.1371/journal.pone.0200876
+* `dynamic.kappa.f0`: see https://doi.org/10.1371/journal.pone.0200876 => Depending on the measurement precision this method automatically combines the results from linear, robust linear and HMR to a more reliable flux estimate.
+
+Default unit: *mg N<sub>2</sub>O* or *CH<sub>4</sub> m^-1 h^-1* or *g* for *CO<sub>2</sub>*, any other reasonable flux unit can be used as well.
 
 See the template for flux visualisation: https://github.com/pyroman1337/gasflxvis/blob/master/data/gasflux-N2O_example-input.csv
 
-Note: Separator of .csv file is a semicolon ";" (can possibly be changed to comma in the future)
+Note: Separator of .csv file is a semicolon ";" (can possibly be changed to comma in the future[if gasfluxes avoids the comma in the diagnostics])
 
 ## Gasflux calculation 
 
 The input file for the flux calculation looks at the moment like this:
 https://github.com/pyroman1337/gasflxvis/blob/master/data/GC-samples_subset.csv
+
+You can click on a flux result in the "Gasfluxes" table and you can see the plot of the chamber calculation by the gasfluxes package (if the flux was calculated on the shiny server).

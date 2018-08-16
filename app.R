@@ -109,7 +109,7 @@ ui <- fluidPage(
          tabPanel(p(icon("bar-chart"), "Graph"), br(), plotlyOutput("timelinePlot")), 
          
          # Data 
-         tabPanel(p(icon("table"), "Dataset"),
+         tabPanel(p(icon("table"), "Data plot"),
           # dataTableOutput(outputId="dTable")
           # verbatimTextOutput("value"),
           downloadButton("downloadData", "Download"),
@@ -170,7 +170,7 @@ server <- function(input, output) {
                         sep = ";")
       }
     sites <- unique(ghg.file$site)
-    checkboxGroupInput("sites", "Choose sites", sites, selected = ghg.file$site[1])
+    checkboxGroupInput("sites", "Choose sites", sites, selected = ghg.file$site[2])
   })
   
   get.flux.data <- reactive({
@@ -193,13 +193,15 @@ server <- function(input, output) {
           }
         )
         if (input$ghgtask == "gasfluxes"){
-          # observeEvent(input$gasfluxes.go, {   # this is not working here
+          observeEvent(input$gasfluxes.go, {
+            
+            
             
            ghg.file <- gasfluxes.get()
             # session$sendCustomMessage(type = 'testmessage',
             #                           message = 'eimalzwätschgezweimalzwätschgedrümalzwätschge... mach ma hüüüü')
            
-          # }, once = T)
+          }, once = T)
 
         }
       }
@@ -330,7 +332,7 @@ server <- function(input, output) {
           # theme_gdocs() +  theme_dark() +
           # theme(legend.position="top") +  # this does not work in ggplotly
           ylab(paste0("flux [",gas.unit," m<sup>-2</sub> h<sup>-1</sub>]")) + xlab("date") + labs(colour = paste0("grouped by:\n ",input$group.var,sep=""))
-        , height = 555, dynamicTicks = T)  # )
+        , height = 500, dynamicTicks = T)  # )
   } )  
   # Downloadable csv of selected dataset ----
   output$downloadData <- downloadHandler(
