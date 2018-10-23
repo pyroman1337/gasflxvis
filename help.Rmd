@@ -26,11 +26,19 @@ Default unit: *mg N<sub>2</sub>O* or *CH<sub>4</sub> m^-1 h^-1* or *g* for *CO<s
 
 See the template for flux visualisation: https://github.com/pyroman1337/gasflxvis/blob/master/data/gasflux-N2O_example-input.csv
 
-Note: Separator of .csv file is a semicolon ";" (can possibly be changed to comma in the future[if gasfluxes avoids the comma in the diagnostics])
+Note: Separator of `.csv` file is a semicolon "`;`" (can possibly be changed to comma in the future[if gasfluxes avoids the comma in the diagnostics])
 
 ## Gasflux calculation 
 
-The input file for the flux calculation looks at the moment like this:
-https://github.com/pyroman1337/gasflxvis/blob/master/data/GC-samples_subset.csv
+To calculate fluxes from chamber concentrations, select the second task available in the shiny app menu. The input file for the flux calculation should contain the following columns shown in the example input file:
 
-You can click on a flux result in the "Gasfluxes" table and you can see the plot of the chamber calculation by the gasfluxes package (if the flux was calculated on the shiny server).
+https://github.com/pyroman1337/gasflxvis/blob/master/data/gasflxvis_gasfluxes_example_input.csv
+
+### Minimal detectable flux (f.detect)
+
+Use the 'minflxlim' shiny app to calculate `f.detect`: https://sae-interactive-data.ethz.ch/minflxlim/
+It is suggested to use the same `f.detect` value for the whole dataset. When one of the parameters (i.e. chamber height) varies throughout the dataset, choose the largest flux limit for pragmatic reasons.
+
+You can click on a flux result in the "Gasfluxes" table to see the plot of the chamber calculation by the gasfluxes package (if the flux was calculated on the shiny server).
+
+We highly recommand the use of the combined linear and non-linear approach described in the publication "Restricting the nonlinearity parameter in soil greenhouse gas flux calculation for more reliable flux estimates" (see link above).

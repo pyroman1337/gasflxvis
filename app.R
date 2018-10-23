@@ -1,13 +1,11 @@
 ###########################################################################
-### Soil GreenHouseGas Flux Visualisation and calculation tool          ###
+### Mixing model simulation for nitrous oxide isotopologue measurements ###
 ###########################################################################
-## Author: Roman Hüppi
+## Author: Roman Hüppi, Matti Barthel
 ## Date : August 2018
-## Version: 0.2
-
+## Version: 0.5
 
 # libraries ---------------------------------------------------------------
-
 library(shiny)
 library(ggplot2)
 # library(ggthemes)
@@ -35,7 +33,7 @@ ui <- fluidPage(
        
        radioButtons("ghgtask", "Select a task:",
                     choices = c("Visualise flux dataset"     = "fluxvisual",    # eval(c(expression("N"[2]*"O"))
-                                "Calculate gasfluxes (beta)" = "gasfluxes"),
+                                "Calculate gasfluxes" = "gasfluxes"),
                     selected = 'fluxvisual'),
        
        radioButtons("gas.species", "GHG of your interest",
@@ -43,19 +41,23 @@ ui <- fluidPage(
                                 "Carbon dioxide" = "CO2",
                                 "Methane" = "CH4"),
                     selected = 'N2O'),
-      
+       radioButtons("separator","Input file separator", c("Comma" = ",","Semicolon" = ";",  "Tab" = "\t"), 
+                    selected = ";", inline=T),
         # Input: Select a file ----
        fileInput("read.input", "Upload input file:",
                  multiple = FALSE,
                  accept = c("text/csv",
                             "text/comma-separated-values,text/plain",
                             ".csv")),
+       
+ 
+       
        conditionalPanel(
          condition = "input.ghgtask == 'gasfluxes'",
          numericInput("f.detect", "Enter the minimal detectable flux:", 0.0072, min = 0.001, max = 0.1),
-         helpText("When you click the button below,",
-                  "the gasfluxes script by Roland Fuss will go crazy",
-                  "to calculate whatever you have always dreamed of! :-O"),
+         helpText("Use the 'minflxlim' shiny app to calculate f.detect:",
+                  "https://sae-interactive-data.ethz.ch/minflxlim/"),
+         
          actionButton("gasfluxes.go", "Estimate gasfluxes")
          ),
   
@@ -75,12 +77,12 @@ ui <- fluidPage(
        #                    # ghg.file$site[1] = ,
        #                    selected = "CS10")
        # ),
-       
+       h4("Visualisation options"),
        uiOutput("siteInput"),
        
 
        # })
-       tags$hr(),
+       # tags$hr(),
        
        selectInput("group.var",
                    label = "Grouping variable",
@@ -106,7 +108,7 @@ ui <- fluidPage(
      mainPanel(
        
        tabsetPanel(
-         tabPanel(p(icon("bar-chart"), "Graph"), br(), plotlyOutput("timelinePlot")), 
+         tabPanel(p(icon("bar-chart"), "Graph"), plotlyOutput("timelinePlot")), 
          
          # Data 
          tabPanel(p(icon("table"), "Data plot"),
@@ -163,18 +165,19 @@ server <- function(input, output) {
   # })
   output$siteInput <- renderUI({
     if(is.null(input$read.input$datapath) == TRUE) {
-      ghg.file <- fread(paste0("data/gasflux-",input$gas.species,"_DiverFarming.csv"), sep = ";")
+      ghg.file <- fread(paste0("data/gasflux-",input$gas.species,"_DiverFarming.csv"), sep = input$separator)
     } else {
       ghg.file <- fread(input$read.input$datapath,
                         header = T,
-                        sep = ";")
+                        sep = input$separator)
       }
     sites <- unique(ghg.file$site)
-    checkboxGroupInput("sites", "Choose sites", sites, selected = ghg.file$site[2])
+    checkboxGroupInput("sites", "Choose sites", sites, selected = ghg.file$site[2], inline=T)
   })
   
-  get.flux.data <- reactive({
-    
+  # get.flux.data <- reactive({
+    get.flux.data <- function(){
+      
       #   file.read <- NULL
       #   return(NULL)}
 
@@ -183,7 +186,7 @@ server <- function(input, output) {
           {
             ghg.file <- fread(input$read.input$datapath,
                            header = T,
-                           sep = ";"
+                           sep = input$separator
                            # quote = input$quote
             )
           },
@@ -195,24 +198,23 @@ server <- function(input, output) {
         if (input$ghgtask == "gasfluxes"){
           observeEvent(input$gasfluxes.go, {
             
+            ghg.file <- gasfluxes.get()
+            # flux.file <- wrap_gasfluxes(gc.samples = get.flux.data(), gas.species = input$gas.species)
             
-            
-           ghg.file <- gasfluxes.get()
             # session$sendCustomMessage(type = 'testmessage',
             #                           message = 'eimalzwätschgezweimalzwätschgedrümalzwätschge... mach ma hüüüü')
-           
           }, once = T)
 
         }
       }
       if (input$ghgtask == "fluxvisual" & is.null(input$read.input$datapath) == TRUE){
-        ghg.file <- fread(paste0("data/gasflux-",input$gas.species,"_DiverFarming.csv"), sep = ";")
+        ghg.file <- fread(paste0("data/gasflux-",input$gas.species,"_DiverFarming.csv"), sep = input$separator)
         }
 
         # ghg.file  <- fread("/media/shiny-sae/gasflxvis/data/gasflux-CH4_DiverFarming.csv", sep = ";")
 
     return(ghg.file)
-  })
+  }  # end get.flux.data()
   
     get.plot.data <- reactive({
       
@@ -222,14 +224,14 @@ server <- function(input, output) {
         }
           tryCatch(
             {
-              ghg.file[ ,date.strp := as.POSIXct(date,format = "%Y-%m-%d")]
+                ghg.file[ ,date.strp := as.POSIXct(date,format = "%Y-%m-%d")]
               # ghg.file <- ghg.file[is.finite(linear.f0),]
                 ghg.file[is.na(robust.linear.f0), robust.linear.f0 := linear.f0]  # use linear for if only 3 datapoints are available
                 ghg.file[is.na(HMR.f0),              HMR.f0 := robust.linear.f0]  # use robust linear if HMR could not be fitted
                 
                 ghg.file[, block := as.factor(block)] # blocks as factors
                 ghg.file[, chamber.nr := as.factor(chamber.nr)] # chamber number as factor
-                ghg.file[, sub_factor := as.factor(sub_factor)] # chamber number as factor
+                ghg.file[, sub_factor := as.factor(sub_factor)] # sub_factor as factor
             })
         
         # ghg.file[ ,treatment1L := substr(treatment,1,1)]
@@ -264,20 +266,21 @@ server <- function(input, output) {
   })
 
   gasfluxes.get <- reactive({
+
     # observeEvent(input$gasfluxes.go, {
-      
+    input$gasfluxes.go
     withProgress(message = ' Calculating gas fluxes. Please wait ...', {
         # n <- length(ghg.file$ID)
         # updateProgress <- function(detail = NULL) {
         #   progress$inc(amount = 1/n, detail = detail)
         # }
-      flux.file <- wrap_gasfluxes(gc.samples = get.flux.data(), gas.species = input$gas.species)
-    
+      flux.file <- wrap_gasfluxes(gc.samples = get.flux.data(), gas.species = input$gas.species, f.detect = input$f.detect)
+
     })
       return(flux.file)
-      
 
-      
+
+
     # }, once = T)
   })
 
@@ -298,8 +301,8 @@ server <- function(input, output) {
     return(gasflx.data)
   })
   
-  output$plot.table2 <- DT::renderDataTable(datatable(gasfluxes.table(), options = list(pageLength = 12,lengthChange=T))
-                                            %>% formatSignif(c(4:8),3))
+  output$plot.table2 <- DT::renderDataTable(datatable(gasfluxes.table(), options = list(pageLength = 15,lengthChange=T))
+                                            %>% formatSignif(c(9:19),3))
   
   # output$value <- renderPrint({input$plot.table2_rows_selected })
   
@@ -329,10 +332,12 @@ server <- function(input, output) {
           geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.2) +
           geom_line() +  #ylim(0,1) +
           # geom_smooth(method = "loess") +
-          # theme_gdocs() +  theme_dark() +
+           # theme_dark() +  # theme_gdocs() + 
           # theme(legend.position="top") +  # this does not work in ggplotly
-          ylab(paste0("flux [",gas.unit," m<sup>-2</sub> h<sup>-1</sub>]")) + xlab("date") + labs(colour = paste0("grouped by:\n ",input$group.var,sep=""))
-        , height = 500, dynamicTicks = T)  # )
+          ylab(paste0("flux [",gas.unit," m<sup>-2</sub> h<sup>-1</sub>]")) + xlab("date") + labs(colour = paste0(" grouped by:\n ",input$group.var,sep=""))  # 
+        , height = 500, dynamicTicks = T) %>%layout(legend = list(orientation = "v",   # show entries horizontally
+                                                               xanchor = "right" ))  # ) ,  # use center of legend as anchor
+                                                  #  x = 0.5)  
   } )  
   # Downloadable csv of selected dataset ----
   output$downloadData <- downloadHandler(
@@ -361,9 +366,10 @@ server <- function(input, output) {
     # When input$n is 1, filename is ./images/image1.jpeg$
     
     # filename <- normalizePath(file.path('./pics',
-    #                                     paste('28_04_18_CS11_18.png', sep='')))
-    pics.select <- input$plot.table2_rows_selected
-    pics.length <- length(pics.select)
+    #                                     paste('15-06-18_CS10_12_oat_c2_interrow_2_50.png', sep='')))
+    # # pics.select <- input$plot.table2_rows_selected
+    pics.select <- input$plot.table2_row_last_clicked
+    # pics.length <- length(pics.select)
     # filename <- NA
     # for(s in 1:pics.length) filename <- c(filename, normalizePath(file.path('./pics',
     #                                                                           paste0(ghg.file$ID[s],'.png', sep=''))))
@@ -371,10 +377,22 @@ server <- function(input, output) {
     # 
     #                                                   )) (filename[1],normalizePath(file.path('./pics',
     #                                         paste0(ghg.file$ID[pics.select],'.png', sep=''))) )
-    if(is.null(input$plot.table2_rows_selected) == FALSE) {
-   filename <- normalizePath(file.path('./pics',
-                                        paste0(gasfluxes.get()$ID[pics.select[pics.length]],'.png', sep='')))
-    # filename <- normalizePath(file.path('./pics',
+    # if(is.null(input$plot.table2_rows_selected) == FALSE) {
+   # filename <- normalizePath(file.path('./pics',
+   #                                      paste0(gasfluxes.get()$ID[pics.select[pics.length]],'.png', sep='')))
+    
+   # pic.date <- as.Date(gasfluxes.get()$date[pics.select],format = "%d-%m-%y")
+   
+   filename <- normalizePath(file.path('./pics', paste0(gasfluxes.get()$date[pics.select],'_',
+                                              gasfluxes.get()$site[pics.select],'_',
+                                              gasfluxes.get()$chamber.nr[pics.select],'_',
+                                              gasfluxes.get()$treatment_fact1[pics.select],'_',
+                                              gasfluxes.get()$treatment_fact2[pics.select],'_',
+                                              gasfluxes.get()$treatment_fact3[pics.select],'_',
+                                              gasfluxes.get()$block[pics.select],'_',
+                                              gasfluxes.get()$sub_factor[pics.select],
+                                              '.png', sep='')))
+   #  # filename <- normalizePath(file.path('./pics',
     #                                          paste0(ghg.file$ID[c(2)],'.png', sep='')))
 
     # filename <- normalizePath(file.path("./pics/",
@@ -383,7 +401,7 @@ server <- function(input, output) {
     # test <- combine(filename)
     # xt = tile(test, 4)
     list(src = filename)
-    }
+    # }
   }, deleteFile = FALSE) 
   
 } # end server function
