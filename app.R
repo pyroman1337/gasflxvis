@@ -1,9 +1,9 @@
 ###########################################################################
-### Mixing model simulation for nitrous oxide isotopologue measurements ###
+### Soil GreenHouseGas Flux Visualisation and calculation tool          ###
 ###########################################################################
-## Author: Roman Hüppi, Matti Barthel
-## Date : August 2018
-## Version: 0.5
+## Author: Roman Hüppi
+## Date : Oct. 2018
+## Version: 0.95
 
 # libraries ---------------------------------------------------------------
 library(shiny)
@@ -54,7 +54,7 @@ ui <- fluidPage(
        
        conditionalPanel(
          condition = "input.ghgtask == 'gasfluxes'",
-         numericInput("f.detect", "Enter the minimal detectable flux:", 0.0072, min = 0.001, max = 0.1),
+         numericInput("f.detect", "Enter the minimal detectable flux:", 0.01, min = 0.001, max = 0.1),
          helpText("Use the 'minflxlim' shiny app to calculate f.detect:",
                   "https://sae-interactive-data.ethz.ch/minflxlim/"),
          
@@ -64,11 +64,6 @@ ui <- fluidPage(
        # Horizontal line ----
        tags$hr(),
        
-       # dateRangeInput("dates", label = h4("Select date range")),
-       # # Input: Select quotes ----
-       # observe({
-       # conditionalPanel(
-       #   condition = "is.null(input$read.input$datapath) == 'TRUE'",
        # h4("Diverfarming's Dataset"),
        # 
        # checkboxGroupInput("site","select Case Study sites:", c("CS09 - Trier DE" = "CS9",
@@ -132,6 +127,7 @@ ui <- fluidPage(
                   #                         "Position"),
                   #             selected = "Treatment"),
                   plotOutput("pics"),
+                  # plotOutput("pics"),
                   br(),
                   downloadButton("downloadGasfluxes", "Download"),
                   verbatimTextOutput("value"),
@@ -178,38 +174,37 @@ server <- function(input, output) {
   # get.flux.data <- reactive({
     get.flux.data <- function(){
       
-      #   file.read <- NULL
-      #   return(NULL)}
-
+      if (input$ghgtask == "fluxvisual" & is.null(input$read.input$datapath) == TRUE){   # 
+        ghg.file <- fread(paste0("data/gasflux-",input$gas.species,"_DiverFarming.csv"), sep = input$separator)
+      }
+      
       if(is.null(input$read.input$datapath) == FALSE){
-        tryCatch(
-          {
+        # tryCatch(
+          # {
             ghg.file <- fread(input$read.input$datapath,
                            header = T,
                            sep = input$separator
                            # quote = input$quote
-            )
-          },
-          error = function(e) {
+                           )
+          # },
+          # error = function(e) {
             # return a safeError if a parsing error occurs
-            stop(safeError(e))
-          }
-        )
-        if (input$ghgtask == "gasfluxes"){
-          observeEvent(input$gasfluxes.go, {
+            # stop(safeError(e))
+          # }
+        # )
+        # if (input$ghgtask == "gasfluxes"){
+          # observeEvent(input$gasfluxes.go, {
             
-            ghg.file <- gasfluxes.get()
+            # ghg.file <- gasfluxes.get()
             # flux.file <- wrap_gasfluxes(gc.samples = get.flux.data(), gas.species = input$gas.species)
             
             # session$sendCustomMessage(type = 'testmessage',
             #                           message = 'eimalzwätschgezweimalzwätschgedrümalzwätschge... mach ma hüüüü')
-          }, once = T)
+          # }, once = T)
 
-        }
+        # }
       }
-      if (input$ghgtask == "fluxvisual" & is.null(input$read.input$datapath) == TRUE){
-        ghg.file <- fread(paste0("data/gasflux-",input$gas.species,"_DiverFarming.csv"), sep = input$separator)
-        }
+
 
         # ghg.file  <- fread("/media/shiny-sae/gasflxvis/data/gasflux-CH4_DiverFarming.csv", sep = ";")
 
@@ -287,22 +282,54 @@ server <- function(input, output) {
   
   # m = c('toDateString', 'toLocaleDateString', 'toLocaleString', 'toUTCString')
   
-  output$plot.table <- DT::renderDataTable(datatable(get.plot.data(), options = list(pageLength = 15,lengthChange=T)) 
-                                           %>% formatSignif(c(5:8),3)
-                                           %>% formatDate(1) )
   # if (input$ghgtask == "fluxvisual") {
   #   output$plot.table2 <- DT::renderDataTable(datatable(get.flux.data(), options = list(pageLength = 12,lengthChange=T))
   #                                             %>% formatSignif(c(4:8),3))
   # }
   
   gasfluxes.table <- reactive({
-    if (input$ghgtask == "fluxvisual") gasflx.data <- get.flux.data()
-    else if (input$ghgtask == "gasfluxes") gasflx.data <- gasfluxes.get()
+    if (input$ghgtask == "fluxvisual") {
+      gasflx.data <- get.flux.data()
+      # gasflx.data <- fread("data/gasflux-N2O_DiverFarming-Rshiny.csv")
+      gasflx.data[, c("ID","linear.f0.se","linear.f0.p","linear.C0","linear.AIC","linear.AICc","linear.RSE","linear.diagnostics",
+                        "robust.linear.f0.se","robust.linear.f0.p","robust.linear.C0","robust.linear.weights","robust.linear.diagnostics",
+                        "HMR.f0.se","HMR.f0.p","HMR.phi","HMR.AIC","HMR.AICc","HMR.RSE","day","month","year","f.detect.n2o","f.detect.co2","f.detect.ch4",
+                        "t.meas","flux.se","flux.p","height [cm]","diameter [cm]") := NULL]
+      setcolorder(gasflx.data,
+                  c("site","date","treatment_fact1","treatment_fact2","treatment_fact3","sub_factor","block","chamber.nr",
+                    "linear.f0","linear.r","robust.linear.f0","HMR.f0","HMR.kappa","kappa.max","dynamic.kappa.f0","method","HMR.diagnostics"))
+    }
+    
+    else if (input$ghgtask == "gasfluxes") {
+      gasflx.data <- gasfluxes.get()
+      # # gasflx.data <- fread("data/gasflxvis_gasfluxes_example_input.csv")
+      # Cols.chosen <- c("linear.f0.se","linear.f0.p","linear.C0","linear.AIC","linear.AICc","linear.RSE","linear.diagnostics",
+      #                  "robust.linear.f0.se","robust.linear.f0.p","robust.linear.C0","robust.linear.weights","robust.linear.diagnostics",
+      #                  "HMR.f0.se","HMR.f0.p","HMR.phi","HMR.AIC","HMR.AICc","HMR.RSE","t.meas","flux.se","flux.p")
+      # gasflx.data[, (Cols.chosen) := NULL]
+      # setcolorder(gasflx.data,
+      #             c("site","date","treatment_fact1","treatment_fact2","treatment_fact3","sub_factor","block","chamber.nr",
+      #               "CO2.TCD.mol","N2O.ECD.mol","CH4.FID.mol","chamber.A","chamber.V","vial.time","chamber.time"))
+      
+      gasflx.data[, c("ID","linear.f0.se","linear.f0.p","linear.C0","linear.AIC","linear.AICc","linear.RSE","linear.diagnostics",
+                      "robust.linear.f0.se","robust.linear.f0.p","robust.linear.C0","robust.linear.weights","robust.linear.diagnostics",
+                      "HMR.f0.se","HMR.f0.p","HMR.phi","HMR.AIC","HMR.AICc","HMR.RSE","day","month","year","f.detect.n2o","f.detect.co2","f.detect.ch4",
+                      "t.meas","flux.se","flux.p","height [cm]","diameter [cm]") := NULL]
+      setcolorder(gasflx.data,
+                  c("site","date","treatment_fact1","treatment_fact2","treatment_fact3","sub_factor","block","chamber.nr",
+                    "linear.f0","linear.r","robust.linear.f0","HMR.f0","HMR.kappa","kappa.max","dynamic.kappa.f0","method","HMR.diagnostics"))
+      
+    }
     return(gasflx.data)
   })
   
+  
+  output$plot.table <- DT::renderDataTable(datatable(get.plot.data(), options = list(pageLength = 15,lengthChange=T)) 
+                                           %>% formatSignif(c(5:8),3)
+                                           %>% formatDate(1) )
+  
   output$plot.table2 <- DT::renderDataTable(datatable(gasfluxes.table(), options = list(pageLength = 15,lengthChange=T))
-                                            %>% formatSignif(c(9:19),3))
+                                           %>% formatSignif(c(9:15),3))
   
   # output$value <- renderPrint({input$plot.table2_rows_selected })
   
@@ -383,7 +410,7 @@ server <- function(input, output) {
     
    # pic.date <- as.Date(gasfluxes.get()$date[pics.select],format = "%d-%m-%y")
    
-   filename <- normalizePath(file.path('./pics', paste0(gasfluxes.get()$date[pics.select],'_',
+   filename <- normalizePath(file.path('./pics', paste0(gasfluxes.get()$date[pics.select],'_',  # paste0('./pics_',input$gas.species)
                                               gasfluxes.get()$site[pics.select],'_',
                                               gasfluxes.get()$chamber.nr[pics.select],'_',
                                               gasfluxes.get()$treatment_fact1[pics.select],'_',
@@ -392,14 +419,7 @@ server <- function(input, output) {
                                               gasfluxes.get()$block[pics.select],'_',
                                               gasfluxes.get()$sub_factor[pics.select],
                                               '.png', sep='')))
-   #  # filename <- normalizePath(file.path('./pics',
-    #                                          paste0(ghg.file$ID[c(2)],'.png', sep='')))
 
-    # filename <- normalizePath(file.path("./pics/",
-    #                                     paste0(ghg.file$ID[pics.select],".png", sep="")))
-    # Return a list containing the filename
-    # test <- combine(filename)
-    # xt = tile(test, 4)
     list(src = filename)
     # }
   }, deleteFile = FALSE) 
