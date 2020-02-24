@@ -16,7 +16,7 @@ Available functions:
 ### gasfluxes calculation
 
 * upload raw data from GC
-* calculate linear and non-linear flux estimates
+* calculate linear and non-linear flux estimates (gasfluxes package by Roland Fuss is applied: https://bitbucket.org/ecoRoland/gasfluxes)
 * select fluxes according to minimum detectable flux (see  https://doi.org/10.1371/journal.pone.0200876)
 * check chamber details to verify how the different models fit
 * view and download data table of the flux calculation results (this table can be uploaded for later visualisation again)
