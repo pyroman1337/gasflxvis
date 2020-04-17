@@ -1,6 +1,6 @@
 # gasflxvis Rshiny App
 
-This shiny app has been developped by the Sustainable Agroecosystem Group at ETH Zurich (http://www.sae.ethz.ch/). The live version can be found here: https://sae-interactive-data.ethz.ch/gasflxvis
+This shiny app has been developed by the Sustainable Agroecosystem Group at ETH Zurich (http://www.sae.ethz.ch/). The live version can be found here: https://sae-interactive-data.ethz.ch/gasflxvis
 
 The app has been developped for DiverFarming (www.diverfarming.eu) in order to visualise field GHG data for the project partners that send thir field GHG samples to our lab in Zurich. For the processing of the GC data to following work flow has been used: https://bitbucket.org/pyro1337/ghg-gc-data-processing
 
