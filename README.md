@@ -2,13 +2,13 @@
 
 This shiny app has been developed by the Sustainable Agroecosystem Group at ETH Zurich (http://www.sae.ethz.ch/). The live version can be found here: https://sae-interactive-data.ethz.ch/gasflxvis
 
-The app has been developped for DiverFarming (www.diverfarming.eu) in order to visualise field GHG data for the project partners that send thir field GHG samples to our lab in Zurich. For the processing of the GC data to following work flow has been used: https://bitbucket.org/pyro1337/ghg-gc-data-processing
+The app was created for DiverFarming (www.diverfarming.eu) in order to visualise field GHG data for the project partners that send their field GHG samples to our lab in Zurich. For the processing of the GC data to following workflow has been used: https://bitbucket.org/pyro1337/ghg-gc-data-processing
 
 Available functions:
 
 ### Soil GHG flux visualisation
 
-* time line plots, aggregated by different treatment factor, single chambers or block
+* timeline plots, aggregated by different treatment factor, single chambers or block
 * cumulative fluxes on timeline (adding up all measurements without interpolation)
 * aggregated boxplot (interpolated daily aggregate) incl. significance t-test
 * view and download data table behind the time line plot
