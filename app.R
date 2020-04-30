@@ -2,8 +2,8 @@
 ### Soil GreenHouseGas Flux Visualisation and calculation tool          ###
 ###########################################################################
 ## Author: Roman Hüppi
-## Date : Oct. 2018
-## Version: 0.95
+## Date : Feb. 2020
+## Version: 1.1 (sanitize error off)
 
 # libraries ---------------------------------------------------------------
 library(shiny)
@@ -15,7 +15,6 @@ library(DT)
 library(gasfluxes)
 library(ggsignif)
 source("wrap-gasfluxes.R")
-# library(EBImage)  # installation of fftw-devel on fedora required
 
 options(shiny.sanitize.errors = FALSE)
 
@@ -269,31 +268,13 @@ server <- function(input, output) {
                                          by = c("date.strp","site","method","chamber.nr", "treatment_fact1", "treatment_fact2", 
                                                 "treatment_fact3", "block","sub_factor")]
         ghg.file.plotsd[, cums := cumsum(mean), "chamber.nr"]
-        ghg.file.plotsd[, agg.flx := agg.fluxes(mean,date.strp, timeunit = "days"), by = "chamber.nr"]
+        ghg.file.plotsd[, agg.flx := agg.fluxes(mean,date.strp, timeunit = "hours"), by = "chamber.nr"]
         ghg.file.plot$cums.sd <- ghg.file.plotsd[, .(cums.sd = sd(cums)), by = c("date.strp","site","method", group.var2)]$cums.sd  # plugs in data for aggregation back in the the original dataframe
         ghg.file.plot[, cums.se := cums.sd/sqrt(n)]
         
-        ghg.file.plot[, agg.flx  := agg.fluxes(mean,date.strp, timeunit = "days"), by = group.var2]  # use gasflux agg.fluxes function to aggregate daily fluxes
+        ghg.file.plot[, agg.flx  := agg.fluxes(mean,date.strp, timeunit = "hours"), by = group.var2]  # use gasflux agg.fluxes function to aggregate daily fluxes
         
-        # ghg.file.plot$agg.flx <- ghg.file.plotsd$agg.flx[1:length(ghg.file.plot$agg.flx)]  # knit the chamberwise results into the output table
-       
-        # ghg.file.merge <- ghg.file.plotsd[unique(agg.flx),.(agg.flx,treatment_fact1)]
-        # 
-        # merge(ghg.file.plot, ghg.file.merge, by = group.var2, all.x = TRUE, all.y = FALSE, allow.cartesian = TRUE)
-        
-        # ghg.file.plot <- ghg.file.plotsd[, .(mean = mean(N2O.flux),  # site == select.site
-        #                                      sd = sd(N2O.flux,na.rm = TRUE),
-        #                                      n = length(N2O.flux)),
-        #                                  # , se = sd/sqrt(n)),
-        #                                  by = c("date.strp","site","method", group.var2)]
-        # 
-        # ghg.file.plot[, sd.cums := sd(cumsum(N2O.flux)), chamber.nr]
-        # ghg.file.plotsd[, .(agg.flx := agg.fluxes(mean,date.strp, timeunit = "days")), by = group.var2]
-        
-        # ghg.file.boxplot <- ghg.file.plot[, .(agg.flx = agg.fluxes(mean,date.strp, timeunit = "days")), by = c("date.strp","site","method", group.var2)]
-        
-        # agg.fluxes(ghg.file.plot$mean,ghg.file.plot$date.strp, timeunit = "hours")
-        # setkey(ghg.file.plot, date.strp)
+  
       return(ghg.file.plot)
       
       # })
@@ -483,17 +464,17 @@ server <- function(input, output) {
                          "Block"              = "block")
     
     gas.unit <- switch(input$gas.species,
-                       "N2O" = "mg N[2]O",
-                       "CO2" = "g CO[2]" ,
-                       "CH4" = "mg CH[4]")
+                       "N2O" = expression(aggregated~emission~(mg~N[2]*O~m^-2)),  #"mg N[2]O",
+                       "CO2" = expression(aggregated~emission~(g~CO[2]~m^-2)),    #"g CO[2]" ,
+                       "CH4" = expression(aggregated~emission~(mg~CH[4]~m^-2)) )  #"mg CH[4]")
     
-    # eval(parse(text = group.var2))
+    # eval(parse(text = group.var2))    expression(Anthropogenic~SO[4]^{"2-"}~(ngm^-3))
       # ggplotly(
         ggplot(data = boxplot.data, aes_string(x = group.var2, y = "agg.flx", fill = group.var2)) + 
           theme_light() +  # theme_gdocs() + 
           geom_signif(comparisons = combn(unique(eval(parse(text = paste("boxplot.data$",group.var2)))), 2, simplify = FALSE),  #ghg.file.plotsd.boxpl list(unique(boxplot.data$group.var2)),
                       map_signif_level=TRUE) +
-          ylab(paste0("aggregated emissions [mg N2O]")) + xlab("treatments") + # ",gas.unit,"
+          ylab(gas.unit) + xlab("treatments") + # ",gas.unit,"
           # ylab(paste0(bquote('aggregated emissions [',gas.unit,']'))) +
           geom_boxplot()
         
